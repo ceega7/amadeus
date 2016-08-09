@@ -14,7 +14,7 @@ var amadeus = (function() {
 	a.getType = function(o) {
 		return Object.prototype.toString.call(o).split('[object ')[1].slice(0,-1).toLowerCase();
 	}
-	a.validTableObj = ['type','name','data','columns', 'assume', 'addId', 'objConvert', 'arrConvert', 'server', 'collection', 'timeout'];
+	a.validTableObj = ['type','name','data','columns', 'limit', 'assume', 'addId', 'objConvert', 'arrConvert', 'server', 'collection', 'timeout'];
 	a.validTypes = ['standard','object', 'mongo'];
 	a.operators = ['eq','neq', 'gt', 'lt', 'gte', 'lte', 'isLike', 'beginsWith', 'endsWith', 'in', 'notIn'];
 	a.objOperators = {'=':'eq', '!=':'neq', '>':'gt', '<':'lt', '>=':'gte', '<=':'lte', '%':'isLike', '._':'beginsWith', '_.':'endsWith', '><':'in', '!><':'notIn'};
@@ -182,7 +182,20 @@ var amadeus = (function() {
 				}
 				if(amadeus.getType(obj.data) === 'array') {
 					if(obj.hasOwnProperty('limit')) {
-						limit
+						if(amadeus.getType(obj.limit) !== 'array') {
+							throw "amadeus err :: limit must be an array";
+						}
+						var o = [];
+						var f = {};
+						for(var i = 0; i < obj.data.length; i+=1) {
+							f = {};
+							for(var items in obj.data[i]) {
+								if(obj.limit.indexOf(items) >= 0) {
+									f[items] = obj.data[i][items];
+								}
+							}
+							o.push(f);
+						}
 					} else {
 						var o = [];
 						for(var i = 0; i < obj.data.length; i+=1) {
@@ -244,13 +257,84 @@ var amadeus = (function() {
 						this.addId();
 					}
 				} else if(amadeus.getType(obj.data) === 'object') {
-					
+					if(obj.hasOwnProperty('limit')) {
+						if(amadeus.getType(obj.limit) !== 'array') {
+							throw "amadeus err :: limit must be an array";
+						}
+						var o = [];
+						var f = {};
+						for(var items in obj.data) {
+							f = {};
+							for(var recs in obj.data[items]) {
+								if(obj.limit.indexOf(recs) >= 0) {
+									f[recs] = obj.data[items][recs];
+								}
+							}
+							o.push(f);
+						}
+					} else {
+						var o = [];
+						for(var items in obj.data) {
+							o.push(obj.data[items]);
+						}
+					}
+					if(obj.hasOwnProperty('objConvert')) {
+						for(var i = 0; i < o.length; i+=1) {
+							for(var items in o[i]) {
+								for(var props in obj.objConvert) {
+									if(props === items) {
+										if(obj.objConvert[items] === 'stringify') {
+											o[i][items] = JSON.stringify(o[i][items]);
+										} else {
+											o[i][items] = o[i][items][obj.objConvert[items]];
+										}
+									}
+								}
+							}
+						}
+					}
+					if(obj.hasOwnProperty('arrConvert')) {
+						for(var i = 0; i < o.length; i+=1) {
+							for(var items in o[i]) {
+								for(var props in obj.arrConvert) {
+									if(props === items) {
+										if(obj.arrConvert[items] === 'stringify') {
+											o[i][items] = JSON.stringify(o[i][items]);
+										} else if(obj.arrConvert[items] === 'count') {
+											o[i][items] = o[i][items].length;
+										}
+									}
+								}
+							}
+						}
+					}
+					this.data = o;
+					this.columns = [];
+					if(obj.assume) {
+						for(var items in o[0]) {
+							this.columns.push(
+								{
+									name: items,
+									dataType: amadeus.getType(o[0][items])
+								}
+							)
+						}
+					} else {
+						for(var items in o[0]) {
+							this.columns.push(
+								{
+									name: items,
+									dataType: 'free'
+								}
+							)
+						}
+					}
+					if(obj.addId) {
+						this.addId();
+					}
 				} else {
 					throw "amadeus err :: 'data' is unsupported";
 				}
-				// Date Converter
-				// Object || Array Converter
-				// Limit
 			} else if(this.type === 'mongo') {
 				var o = [];
 				var th = this;
