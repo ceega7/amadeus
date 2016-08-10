@@ -73,8 +73,8 @@
   ----- | -----
   JavaScript | .js
   C# | .cs
-  Python | .py
 
+  Python | .py
  **languages_II**:
   
   name | typed
@@ -93,12 +93,12 @@
   });
   ```
   
-  The *'ret'* property takes the '\*' wilcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the *.select* function.
+  The *'ret'* property takes the '\*' wilcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the **.select** function.
   
   ```javascript
   db.select('languages_I', {
     ret: '*'
-  }).where('!=', {
+  }).where('neq', {
     name: 'JavaScript'
   });
   ```
@@ -109,3 +109,39 @@
   ----- | -----
   C# | .cs
   Python | .py
+  
+  Additional logic can be added by using the **.and** and **.or** chains:
+  
+  ```javascript
+  db.select('languages_I', {
+    ret: '*'
+  }).where('neq', {
+    name: 'JavaScript'
+  }).and('isLike', {
+    ext: 'p'
+  });
+  ```
+  The **activeQuery** would display:
+  
+  name | ext
+  ----- | -----
+  Python | .py
+
+  ```javascript
+  db.select('languages_I', {
+    ret: '*'
+  }).where('neq', {
+    name: 'JavaScript'
+  }).and('isLike', {
+    ext: 'p'
+  }).or('=', {
+    name: 'JavaScript'
+  });
+  ```
+  
+  The **.or** chain queries the against the original **selectQuery** query created from the **.select** function. So therefore, the above **activeQuery** would display as: 
+  
+  name | ext
+  ----- | -----
+  Python | .py
+  JavaScript | .js
