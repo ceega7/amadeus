@@ -172,3 +172,19 @@
   name | ext
   ----- | -----
   JavaScript | .js
+  
+  The **activeQuery** data can be sorted by using the **orderBy** chain. This takes as its first argument a column name from the **activeQuery**. If the second optional argument is true, the data will be sorted in ascending order:
+  
+  ```javascript
+  db.select('languages_I', {
+    ret: ['name']
+  }).orderBy('name')
+  ```
+  
+  This will return:
+  
+  name | 
+  ----- | 
+  C# |
+  JavaScript |
+  Python |
