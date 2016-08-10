@@ -146,13 +146,29 @@
   Python | .py
   JavaScript | .js
 
-  Additionally, a conditional call can be made which will execute a query chain if an expression evaluates to true. This is useful if a on a form's input field. The first argument of the **.conditional** function takes either *'and'* or *'or'* with the second being the expression. The final two parameters are the same as any normal chaining query function.
+  Additionally, a conditional call can be made which will execute a query chain if an expression evaluates to true. This is useful to make a chain a query based on input within a form. The first argument of the **.conditional** function takes either *'and'* or *'or'* with the second being the expression. The final two parameters are the same as any normal chaining query function.
   
+  **HTML**
    ```html
   <form class="form form-inline">
-    <label for="fName">Type Name</label>
-    <input type="text" id="fName" class="form-control"></input>
-  </form>
+	  <label for="fName">Type Name</label>
+	  <input type="text" id="fName" class="form-control"></input>
+	  <button type="button" id="myBtn" class="btn">Get Me</button>
+	</form>
+  ```
+  **JS**
+  ```javascript
+  $('#myBtn').click(function() {
+	  db.select('languages_I', {
+	    ret: '*'
+	  })
+	  .where('neq', { name: null })
+	  .conditional('and', $('#fName').val(), 'eq', { name: $('#fName').val() })
+	});
   ```
   
+  Here, if the string 'JavaScript' was entered into the *fName* input box, the **activeQuery** would return:
   
+  name | ext
+  ----- | -----
+  JavaScript | .js
