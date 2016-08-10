@@ -90,7 +90,7 @@
   ```javascript
   db.select('languages_I', {
     ret: '*'
-  })
+  });
   ```
   
   The *'ret'* property takes the '\*' wilcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the *.select* function.
