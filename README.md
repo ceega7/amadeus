@@ -145,3 +145,14 @@
   ----- | -----
   Python | .py
   JavaScript | .js
+
+  Additionally, a conditional call can be made which will execute a query chain if an expression evaluates to true. This is useful if a on a form's input field. The first argument of the **.conditional** function takes either *'and'* or *'or'* with the second being the expression. The final two parameters are the same as any normal chaining query function.
+  
+   ```html
+  <form class="form form-inline">
+    <label for="fName">Type Name</label>
+    <input type="text" id="fName" class="form-control"></input>
+  </form>
+  ```
+  
+  
