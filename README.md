@@ -159,12 +159,12 @@
   **JS**
   ```javascript
   $('#myBtn').click(function() {
-	  db.select('languages_I', {
-	    ret: '*'
-	  })
-	  .where('neq', { name: null })
-	  .conditional('and', $('#fName').val(), 'eq', { name: $('#fName').val() })
-	});
+    db.select('languages_I', {
+      ret: '*'
+    })
+    .where('neq', { name: null })
+    .conditional('and', $('#fName').val(), 'eq', { name: $('#fName').val() })
+  });
   ```
   
   Here, if the string 'JavaScript' was entered into the *fName* input box, the **activeQuery** would return:
