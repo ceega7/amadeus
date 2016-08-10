@@ -15,7 +15,7 @@ var amadeus = (function() {
 		return Object.prototype.toString.call(o).split('[object ')[1].slice(0,-1).toLowerCase();
 	}
 	a.validTableObj = ['type','name','data','columns', 'limit', 'assume', 'addId', 'objConvert', 'arrConvert', 'server', 'collection', 'timeout'];
-	a.validTypes = ['standard','object', 'mongo'];
+	a.validTypes = ['standard','object'];
 	a.operators = ['eq','neq', 'gt', 'lt', 'gte', 'lte', 'isLike', 'beginsWith', 'endsWith', 'in', 'notIn'];
 	a.objOperators = {'=':'eq', '!=':'neq', '>':'gt', '<':'lt', '>=':'gte', '<=':'lte', '%':'isLike', '._':'beginsWith', '_.':'endsWith', '><':'in', '!><':'notIn'};
 	return a;
@@ -74,6 +74,23 @@ var amadeus = (function() {
 		}
 		if(!obj.hasOwnProperty('ret')) {
 			throw "amadeus err :: object must contain a 'ret' property";
+		}
+		if(obj.hasOwnProperty('alias')) {
+			if(amadeus.getType(obj.ret) !== 'array') {
+				throw "amadeus err :: 'ret' must be an array is 'alias' is used";
+			}
+			if(amadeus.getType(obj.alias) !== 'array') {
+				throw "amadeus err :: 'alias' must be an array";
+			}
+			if(obj.alias.length !== obj.ret.length) {
+				throw "amadeus err :: 'ret' and 'alias' must contain the same columns";
+			}
+			if(obj.alias.indexOf('id_') >= 0) {
+				throw "amadeus err :: columns cannot be named 'id_'";
+			}
+			if(obj.alias.indexOf('lm_') >= 0) {
+				throw "amadeus err :: columns cannot be named 'lm_'";
+			}
 		}
 		this.activeTable = tbl;
 		tbl.select_(obj);
@@ -421,60 +438,6 @@ var amadeus = (function() {
 				} else {
 					throw "amadeus err :: 'data' is unsupported";
 				}
-			} else if(this.type === 'mongo') {
-				var o = [];
-				var th = this;
-				var mongo = require('mongodb').MongoClient;
-				var assert = require('assert');
-				var ObjectId = require('mongodb').ObjectID;	
-				mongo.connect(obj.server,function(err, database) {
-					var callback = function() {
-						mongo.close();
-					}
-					if (err) throw "amadeus err :: '" +  err + "'";
-					var db = database;
-					var cursor = db.collection(obj.collection).find( );
-					cursor.each(function(err, doc) {
-					  assert.equal(err, null);
-					  if (doc != null) {
-						 o.push(doc);
-					  } else {
-						 db.close();
-					  }
-				   });
-				});
-				if(!obj.timeout) {
-					var tm = 5000;
-				} else {
-					var tm = obj.timeout;
-				}
-				th.columns = [];
-				setTimeout(function() {
-					th.data = o;
-					th.columns = [];
-					if(obj.assume) {
-						for(var items in o[0]) {
-							th.columns.push(
-								{
-									name: items,
-									dataType: amadeus.getType(o[0][items])
-								}
-							)
-						}
-					} else {
-						for(var items in o[0]) {
-							th.columns.push(
-								{
-									name: items,
-									dataType: 'free'
-								}
-							)
-						}
-					}
-					if(obj.addId) {
-						th.addId();
-					}
-				}, 4000);
 			}
 		}
 	}
@@ -561,6 +524,20 @@ var amadeus = (function() {
 		var a = [];
 		for(var items in o) {
 			a.push(o[items]);
+		}
+		if(obj.hasOwnProperty('alias')) {
+			for(var i = 0; i < a.length; i+=1) {
+				for(var items in a[i]) {
+					if(a[i].hasOwnProperty(items)) {
+						for(var j = 0; j < obj.alias.length; j+=1) {
+							if(items === obj.ret[j]) {
+								a[i][obj.alias[j]] = a[i][items]
+								delete a[i][items]
+							}
+						}
+					}
+				}
+			}
 		}
 		this.selectQuery = a;
 		this.activeQuery = a;
