@@ -65,9 +65,9 @@
   });
   ```
   
-  Following initialisation, the tables above can be queried using the amadeus query syntax. Querying, will create a carbon copy of the table's data property which can be amended and used as appropriate.
+  Following initialisation, the tables above can be queried using the amadeus query syntax. Querying will create a carbon copy of the table's data property which can be amended and used as appropriate.
   
-  languages_I
+  languages_I:
   
   name | ext
   ----- | -----
@@ -75,3 +75,37 @@
   C# | .cs
   Python | .py
 
+ languages_II:
+  
+  name | typed
+  ----- | -----
+  JavaScript | weakly
+  C# | strongly
+  Python | dynamically
+
+### Querying
+
+  Tables can be queried by creating an activeQuery object from the table in question. To create an activeQuery, the following syntax must be used:
+  
+  ```javascript
+  db.select('languages_I', {
+    ret: '*'
+  })
+  ```
+  
+  The ret property takes the '*' wilcard as a string or a list of columns as an array. Once the activeQuery has been created, a query can executed by chaining calls to the .select function.
+  
+  ```javascript
+  db.select('languages_I', {
+    ret: '*'
+  }).where('!=', {
+    name: 'JavaScript'
+  });
+  ```
+  
+  If printed as a table, the above activeQuery would display:
+  
+  name | ext
+  ----- | -----
+  C# | .cs
+  Python | .py
