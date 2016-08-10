@@ -200,6 +200,41 @@ var amadeus = (function() {
 		tbl.remove_(obj);
 		return this;
 	};
+	amadeus.Db.prototype.batchRemove = function() {
+		if(!this.activeTable || this.activeTable == '') {
+			throw "amadeus err :: no activeTable";
+		}
+		if(this.activeTable.getColumns().indexOf('id_') < 0) {
+			throw "amadeus err :: batchRemove cannot be used on activeQueries which do not have an id_ column";
+		}
+		var arr = [];
+		for(var i = 0; i < this.activeTable.activeQuery.length; i+=1) {
+			this.activeTable.remove_({ where: { id_: this.activeTable.activeQuery[i].id_ }} )
+			arr.push(this.activeTable.activeQuery[i]);
+		}
+		this.activeQuery = '';
+		this.selectQuery = '';
+		return this;
+	};
+	amadeus.Db.prototype.batchUpdate = function(obj) {
+		if(!this.activeTable || this.activeTable == '') {
+			throw "amadeus err :: no activeTable";
+		}
+		if(this.activeTable.getColumns().indexOf('id_') < 0) {
+			throw "amadeus err :: batchUpdate cannot be used on activeQueries which do not have an id_ column";
+		}
+		var arr = [];
+		for(var i = 0; i < this.activeTable.activeQuery.length; i+=1) {
+			this.activeTable.update_({ 
+				where: { id_: this.activeTable.activeQuery[i].id_ }, 
+				update: obj.update
+			})
+			arr.push(this.activeTable.activeQuery[i]);
+		}
+		this.activeQuery = '';
+		this.selectQuery = '';
+		return this;
+	};
 	return amadeus;
 })(amadeus || {});
 
@@ -221,8 +256,7 @@ var amadeus = (function() {
 		this.activeQuery;
 		this.selectQuery;
 		if(!obj.hasOwnProperty('type')) {
-			this.type = 'standard';
-			// standard
+			throw "amadeus err :: Table must be a type";
 		} else {
 			if(amadeus.validTypes.indexOf(obj.type) < 0) {
 				throw "amadeus err :: '" + obj.type + "' is not a valid Table type";
@@ -1030,6 +1064,9 @@ var amadeus = (function() {
 		if(!c) {
 			throw "amadeus err :: column to sort must be specified";
 		}
+		if(this.activeQuery.length <= 0) {
+			return this;
+		}
 		if(this.getColumns().indexOf(c) < 0) {
 			throw "amadeus err :: '" + c + "' is not a column within the activeQuery";
 		}
@@ -1063,14 +1100,14 @@ var amadeus = (function() {
 	}
 	amadeus.Table.prototype.use_ = function(fn) {
 		if(!this.activeQuery || this.activeQuery == '') {
-			throw "amadeus err :: no activeQuery";
+			return this;
 		}
 		fn(this.activeQuery);
 		return this;
 	};
 	amadeus.Table.prototype.toPretty_ = function() {
 		if(!this.activeQuery || this.activeQuery == '') {
-			throw "amadeus err :: no activeQuery";
+			return this;
 		}
 		console.log(JSON.stringify(this.activeQuery, null, 4));
 		return this;
@@ -1126,7 +1163,7 @@ var amadeus = (function() {
 	}
 	amadeus.Table.prototype.toTable_ = function(id) {
 		if(!this.activeQuery || this.activeQuery == '') {
-			throw "amadeus err :: no activeQuery";
+			return this;
 		}
 		if(!id) {
 			throw "amadeus err :: id must be specified for Table paste";
@@ -1199,7 +1236,6 @@ var amadeus = (function() {
 						} else if(c[j] == undefined) {
 							// do nothing
 						} else {
-							console.log(c[j]);
 							o[c[j]] = null;
 						}
 					}
@@ -1264,7 +1300,6 @@ var amadeus = (function() {
 				for(var ups in obj.where) {
 					if(ups === items) {
 						if(obj.where[ups] === this.data[i][ups]) {
-							console.log(this.data[i][ups])
 							this.data.splice(i, 1);
 							i-=1;
 						}
@@ -1276,4 +1311,4 @@ var amadeus = (function() {
 	return amadeus;
 })(amadeus || {});
 
-module.exports = amadeus;
+// module.exports = amadeus; // node.js only
