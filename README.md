@@ -188,3 +188,21 @@
   C# |
   JavaScript |
   Python |
+
+ Column joins can be performed by on tables within the same Db by using the **.join** chain. This takes four arguments. The first is the name of the table you wish to extract a column from. Secondly, the name of the column you wish to add must be used as the next argument. The third argument is a key:value pair specifying the matching columns between the two tables. The key should be the column from the first table, with the value being the column from the second table. An additional *alias* argument can be passed which will name the newly created column (otherwise it will default as the value in the previous argument). If no matches are found, null will be used as the property value:
+ 
+ ```javascript
+ db.select('languages_I', {
+   ret: '*'
+ }).join('languages_II', 'typed', {
+   name: 'name'
+ }, 'typing type');
+ ```
+ 
+ Will return:
+ 
+ name | ext | typing type
+  ----- | ----- | ----
+  JavaScript | .js | weakly
+  C# | .cs | strongly	
+  Python | .py | dynamically
