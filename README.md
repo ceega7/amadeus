@@ -65,7 +65,7 @@
   });
   ```
   
-  Following initialisation, the tables above can be queried using the amadeus query syntax. Querying will create a carbon copy of the table's *'data'* property which can be amended and used as appropriate.
+  Following initialisation, the tables above can be queried using the amadeus query syntax. Querying will create a carbon copy of the table's *'data'* property called **activeQuery** - which can be amended and used as appropriate. A tabular representation of the objects above can be found below:
   
   **languages_I**:
   
@@ -85,7 +85,7 @@
 
 ### Querying
 
-  Tables can be queried by creating an **activeQuery** object from the table in question. To create an **activeQuery**, the following syntax must be used:
+  An **activeQuery** is initialised with the **.select** function. The first argument must be a Db Table or saved Query:
   
   ```javascript
   db.select('languages_I', {
@@ -93,7 +93,7 @@
   });
   ```
   
-  The *'ret'* property takes the '\*' wilcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the **.select** function.
+  The second argument must have a *'ret'* property which either takes the '\*' wilcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the **.select** function.
   
   ```javascript
   db.select('languages_I', {
@@ -146,7 +146,7 @@
   Python | .py
   JavaScript | .js
 
-  Additionally, a conditional call can be made which will execute a query chain if an expression evaluates to true. This is useful to make a chain a query based on input within a form. The first argument of the **.conditional** function takes either *'and'* or *'or'* with the second being the expression. The final two parameters are the same as any normal chaining query function.
+  Additionally, a conditional call can be made which will execute a query chain if an expression evaluates to true. This is useful to chain based on the input from a HTML form. The first argument of the **.conditional** function takes either *'and'* or *'or'* with the second being the expression. The final two parameters are the same as any normal chaining query function.
   
   **HTML**
    ```html
