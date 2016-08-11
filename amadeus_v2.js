@@ -18,6 +18,7 @@ var amadeus = (function() {
 	a.validTypes = ['standard','object', 'query'];
 	a.operators = ['eq','neq', 'gt', 'lt', 'gte', 'lte', 'isLike', 'beginsWith', 'endsWith', 'in', 'notIn', 'regexp'];
 	a.objOperators = {'=':'eq', '!=':'neq', '>':'gt', '<':'lt', '>=':'gte', '<=':'lte', '%':'isLike', '._':'beginsWith', '_.':'endsWith', '><':'in', '!><':'notIn', 'regexp':'regexp'};
+	a._version = "1.0.0";
 	return a;
 }());
 
@@ -267,13 +268,34 @@ var amadeus = (function() {
 				throw "amadeus err:: Query '" + n + "' already exists";
 			}	
 		}
+	
 		var tbl = new amadeus.Table({
 			name: n,
 			type: 'query',
 			data: this.activeTable.activeQuery
 		})
+		console.log(JSON.stringify(this.activeTable.activeQuery, null, 4));
 		this.queries.push(tbl);
 		return this;
+	};
+	amadeus.Db.prototype.drop = function(t, type) {
+		if(!type || type === '') {
+			for(var i = 0; i < this.tables.length; i+=1) {
+				if(this.tables[i].name === t) {
+					this.tables.splice(i, 1);
+					return this;
+				}
+			}
+			throw "amadeus err :: no table found called '" + t + "'";
+		}
+		if(type === 'query') {
+			for(var i = 0; i < this.queries.length; i+=1) {
+				if(this.queries[i].name === t) {
+					this.queries.splice(i, 1);
+					return this;
+				}
+			}	
+		}
 	};
 	return amadeus;
 })(amadeus || {});
@@ -303,7 +325,7 @@ var amadeus = (function() {
 			}
 			this.type = obj.type;
 			if(this.type === 'query') {
-				var o = obj.data
+				var o = obj.data;
 				this.data = o;
 				this.columns = [];
 				if(obj.assume) {
