@@ -93,7 +93,7 @@
   });
   ```
   
-  The second argument must have a *'ret'* property which either takes the '\*' wilcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the **.select** function.
+  The second argument must have a *'ret'* property which either takes the '\*' wildcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the **.select** function.
   
   ```javascript
   db.select('languages_I', {
