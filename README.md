@@ -92,6 +92,11 @@
     ret: '*'
   });
   ```
+  **AS sql:**
+  
+  ```sql
+  select * from languages_I
+  ```
   
   The second argument must have a *'ret'* property which either takes the '\*' wildcard as a string or a list of columns as an array. Once the **activeQuery** has been created, a query can executed by chaining calls to the **.select** function.
   
@@ -101,6 +106,10 @@
   }).where('neq', {
     name: 'JavaScript'
   });
+  ```
+  **AS sql:**
+  ```sql
+  select * from languages_I where name != 'JavaScript'
   ```
   
   If printed as a table, the above **activeQuery** would display:
@@ -121,6 +130,11 @@
     ext: 'p'
   });
   ```
+  **AS sql:**
+  ```sql
+  select * from languages_I where name != 'JavaScript' and ext = '%p%'
+  ```
+  
   The **activeQuery** would display:
   
   name | ext
@@ -137,6 +151,11 @@
   }).or('=', {
     name: 'JavaScript'
   });
+  ```
+  
+  **AS sql:**
+  ```sql
+  select * from languages_I where (name != 'JavaScript' and ext '%p%') or name = 'JavaScript'
   ```
   
   The **.or** chain queries the against the original **selectQuery** query created from the **.select** function. So therefore, the above **activeQuery** would display as: 
@@ -182,7 +201,10 @@
     ret: ['name']
   }).orderBy('name')
   ```
-  
+   **AS sql:**
+  ```sql
+  select name from languages_I order by name
+  ```
   This will return:
   
   name | 
@@ -210,6 +232,11 @@
  }, 'typing type');
  ```
  
+  **AS sql:**
+  ```sql
+  select a.*, b.typed as [typing type] from languages_I as a left join languages_II as b on a.name = b.name
+  ```
+ 
  Will return:
  
  name | ext | typing type
@@ -230,7 +257,12 @@ db.insert('languages_I', {
   ]
 });
 ```
-**.insert** and object with an array value. Any columns not specified in the insert query which do not exist will default to null. The above **activeQuery** will become:
+**AS sql:**
+```sql
+insert into languages_I (name, ext) values ('Perl', '.pl'), ('SQL', null)
+```
+
+**.insert** takes an object with an array value. Any columns not specified in the insert query which do not exist will default to null. The above **activeQuery** will become:
 
 name | ext 
   ----- | -----
@@ -248,6 +280,10 @@ name | ext
    update: { ext: '.sql' }
  });
  ```
+ **AS sql:**
+```sql
+update languages_I set ext = '.sql' where name = 'SQL'
+```
  
  Result: 
  
@@ -258,3 +294,30 @@ name | ext
   Python | .py 
   Perl | .pl 	
   SQL | .sql
+
+Entire rows are deleted by using the **.remove** function.
+
+```javascript
+db.remove('languages_I', {
+  where: { name: 'SQL' }
+});
+
+db.remove('languages_I', {
+  where: { name: 'Perl	' }
+});
+```
+ **AS sql:**
+```sql
+delete * from languages_I where name = 'SQL'
+```
+```sql
+delete * from languages_I where name = 'Perl'
+```
+
+Output: 
+
+name | ext 
+  ----- | -----
+  JavaScript | .js  
+  C# | .cs 	
+  Python | .py 
