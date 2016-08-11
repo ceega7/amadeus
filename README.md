@@ -217,3 +217,44 @@
   JavaScript | .js | weakly
   C# | .cs | strongly	
   Python | .py | dynamically
+
+### Insert, Update and Remove
+
+To insert data into a table within Db:
+
+```javascript
+db.insert('languages_I', {
+  data: [
+    { name: 'Perl', ext: '.pl' },
+    { name: 'SQL' },
+  ]
+});
+```
+**.insert** and object with an array value. Any columns not specified in the insert query which do not exist will default to null. The above **activeQuery** will become:
+
+name | ext 
+  ----- | -----
+  JavaScript | .js  
+  C# | .cs 	
+  Python | .py 
+  Perl | .pl 	
+  SQL | null
+  
+ An update can be made by specifying a single key:value pair *where* object. The resulting *update* object can amend as many columns as required:
+ 
+ ```javascript
+ db.update('languages_I', {
+   where: { name: 'SQL' },
+   update: { ext: '.sql' }
+ });
+ ```
+ 
+ Result: 
+ 
+ name | ext 
+  ----- | -----
+  JavaScript | .js  
+  C# | .cs 	
+  Python | .py 
+  Perl | .pl 	
+  SQL | .sql
