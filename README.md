@@ -321,3 +321,20 @@ name | ext
   JavaScript | .js  
   C# | .cs 	
   Python | .py 
+
+### Operators for chain Queries
+
+```javascript
+'eq' || '='		// Equal To (case sensitive)
+'neq' || '!='		// Not Equal To (case sensitive)
+'gt' || '>'		// Greater Than
+'lt' || '<'		// Less Than
+'gte' || '>='		// Greater Than or Equal To
+'lte' || '<='		// Less Than or Equal To
+'beginsWith' || '_.'	// Begins With (case sensitive)
+'endsWith' || '._'	// Ends With (case sensitive)
+'isLike' || '%'		// Is Like (not case sensitive)
+'in' || '><'	  	// In (['one', 'two'] case sensitive)
+'notIn' || '!><'	// Not In (['one', 'two'] case sensitive)
+'regexp'                // Use a regular expression for comparison (if regexp.exec(value) !== null then returned)
+```
