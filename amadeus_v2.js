@@ -1340,6 +1340,9 @@ var amadeus = (function() {
 							if(obj.where[ups] === this.data[i][ups]) {
 								for(var cons in obj.update) {
 									this.data[i][cons] = obj.update[cons];
+									if(this.data[i].hasOwnProperty('lm_')) {
+										this.data[i]['lm_'] = new Date();
+									}
 								}
 							}
 						}
