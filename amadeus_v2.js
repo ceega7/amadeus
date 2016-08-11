@@ -16,8 +16,8 @@ var amadeus = (function() {
 	}
 	a.validTableObj = ['type','name','data','columns', 'limit', 'assume', 'addId', 'objConvert', 'arrConvert', 'server', 'collection', 'timeout'];
 	a.validTypes = ['standard','object', 'query'];
-	a.operators = ['eq','neq', 'gt', 'lt', 'gte', 'lte', 'isLike', 'beginsWith', 'endsWith', 'in', 'notIn'];
-	a.objOperators = {'=':'eq', '!=':'neq', '>':'gt', '<':'lt', '>=':'gte', '<=':'lte', '%':'isLike', '._':'beginsWith', '_.':'endsWith', '><':'in', '!><':'notIn'};
+	a.operators = ['eq','neq', 'gt', 'lt', 'gte', 'lte', 'isLike', 'beginsWith', 'endsWith', 'in', 'notIn', 'regexp'];
+	a.objOperators = {'=':'eq', '!=':'neq', '>':'gt', '<':'lt', '>=':'gte', '<=':'lte', '%':'isLike', '._':'beginsWith', '_.':'endsWith', '><':'in', '!><':'notIn', 'regexp':'regexp'};
 	return a;
 }());
 
@@ -733,7 +733,6 @@ var amadeus = (function() {
 				}
 			}
 		} else if(op === 'notIn') {
-			// notIn incomplete!!!!!!!
 			var o = [];
 			if(amadeus.getType(obj[Object.keys(obj)[0]]) !== 'array') {
 				throw "amadeus err :: obj value must be an array for 'in' operator";
@@ -746,13 +745,26 @@ var amadeus = (function() {
 								console.log(this.activeQuery[i]);
 								this.activeQuery.splice(i,1);
 								i-=1;
-								// test this
 							}
 						}
 					}
 				}
 			}
 			var o = this.activeQuery;
+		} else if(op === 'regexp') {
+			if(amadeus.getType(op) === 'regexp') {
+				throw "amadeus err :: regexp expected";
+			}
+			var o = [];
+			for(var i = 0; i < this.activeQuery.length; i+=1) {
+				for(var items in this.activeQuery[i]) {
+					if(items === Object.keys(obj)[0]) {
+						if(obj[Object.keys(obj)[0]].exec(this.activeQuery[i][items]) !== null) {
+							o.push(this.activeQuery[i]);
+						}	
+					}
+				} 
+			}
 		}
 		this.activeQuery = o;
 		return this;
@@ -894,7 +906,6 @@ var amadeus = (function() {
 				}
 			}
 		} else if(op === 'notIn') {
-			// notIn incomplete!!!!!!!
 			var o = [];
 			if(amadeus.getType(obj[Object.keys(obj)[0]]) !== 'array') {
 				throw "amadeus err :: obj value must be an array for 'in' operator";
@@ -907,13 +918,26 @@ var amadeus = (function() {
 								console.log(this.activeQuery[i]);
 								this.activeQuery.splice(i,1);
 								i-=1;
-								// test this
 							}
 						}
 					}
 				}
 			}
 			var o = this.activeQuery;
+		} else if(op === 'regexp') {
+			if(amadeus.getType(op) === 'regexp') {
+				throw "amadeus err :: regexp expected";
+			}
+			var o = [];
+			for(var i = 0; i < this.activeQuery.length; i+=1) {
+				for(var items in this.activeQuery[i]) {
+					if(items === Object.keys(obj)[0]) {
+						if(obj[Object.keys(obj)[0]].exec(this.activeQuery[i][items]) !== null) {
+							o.push(this.activeQuery[i]);
+						}	
+					}
+				} 
+			}
 		}
 		this.activeQuery = o;
 		return this;
@@ -1055,7 +1079,6 @@ var amadeus = (function() {
 				}
 			}
 		} else if(op === 'notIn') {
-			// notIn incomplete!!!!!!!
 			var o = [];
 			if(amadeus.getType(obj[Object.keys(obj)[0]]) !== 'array') {
 				throw "amadeus err :: obj value must be an array for 'in' operator";
@@ -1068,13 +1091,26 @@ var amadeus = (function() {
 								console.log(this.selectQuery[i]);
 								this.selectQuery.splice(i,1);
 								i-=1;
-								// test this
 							}
 						}
 					}
 				}
 			}
 			var o = this.activeQuery;
+		} else if(op === 'regexp') {
+			if(amadeus.getType(op) === 'regexp') {
+				throw "amadeus err :: regexp expected";
+			}
+			var o = [];
+			for(var i = 0; i < this.selectQuery.length; i+=1) {
+				for(var items in this.selectQuery[i]) {
+					if(items === Object.keys(obj)[0]) {
+						if(obj[Object.keys(obj)[0]].exec(this.selectQuery[i][items]) !== null) {
+							o.push(this.selectQuery[i]);
+						}	
+					}
+				} 
+			}
 		}
 		for(var i = 0; i < o.length; i+=1) {
 			this.activeQuery.push(o[i]);
