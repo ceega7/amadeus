@@ -73,8 +73,8 @@
   ----- | -----
   JavaScript | .js
   C# | .cs
-
   Python | .py
+  
  **languages_II**:
   
   name | typed
